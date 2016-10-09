@@ -67,6 +67,10 @@ export default class extends Component {
         <td>{formatDate(dob)}</td>
         <td>
           <button
+            onClick={e => this.onEdit(e, jersey)}
+            className="btn btn-xs btn-primary">Edit</button>
+          &nbsp;
+          <button
             onClick={e => this.onDelete(e, jersey)}
             className="btn btn-xs btn-danger">Delete</button>
         </td>
@@ -96,7 +100,7 @@ export default class extends Component {
             <th>Weight {this.renderArrows('weight')}</th>
             <th>Batting Hand {this.renderArrows('batting_hand')}</th>
             <th>Throwing Hand {this.renderArrows('throwing_hand')}</th>
-            <th>Date of Birth {this.renderArrows('dob')}</th>
+            <th>Birthday {this.renderArrows('dob')}</th>
             <td></td>
           </tr>
         </thead>
