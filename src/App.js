@@ -2,14 +2,17 @@ import React, { Component } from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import './App.css'
 import origin from 'origin-url'
-import { getJSON } from './fetch'
+import { getJSON, postJSON } from './fetch'
 import Indians from './Indians'
 import Create from './Create'
 
 export default class extends Component {
   constructor(props) {
     super(props)
-    this.state = { indians: [] }
+    this.state = {
+      indians: [],
+      searchAttr: 'first_name'
+    }
   }
 
   componentDidMount() {
@@ -21,6 +24,15 @@ export default class extends Component {
     this.lastAttr = attr
 
     getJSON(`${origin}/api/indians/${order}/${attr}`).then(indians => {
+      this.setState({ indians })
+    }).catch(err => {
+      console.log('Error fetching indians:', err)
+    })
+  }
+
+  search(search = '') {
+    const { searchAttr } = this.state
+    postJSON(`${origin}/api/indians/search/${searchAttr}`, { search }).then(indians => {
       this.setState({ indians })
     }).catch(err => {
       console.log('Error fetching indians:', err)
@@ -43,6 +55,14 @@ export default class extends Component {
     this.grab(this.lastOrder, this.lastAttr)
   }
 
+  onSearch(e) {
+    e.preventDefault()
+    e.target.blur()
+    const str = document.getElementById('searchString').value
+    if (str) this.search(str)
+    else this.refresh()
+  }
+
   render() {
     const { indians } = this.state
     return (
@@ -54,6 +74,15 @@ export default class extends Component {
         </div>
         <div className="row">
           <div className="col-md-12">
+            <form className="form-inline">
+              <div className="form-group">
+                <label htmlFor="searchString">Search</label>
+                &nbsp;
+                <input type="search" className="form-control" id="searchString" placeholder="Search for ..." />
+              </div>
+              &nbsp;
+              <button onClick={e => this.onSearch(e)} type="submit" className="btn btn-default">Search</button>
+            </form>
             <Indians
               indians={indians}
               sortAsc={this.sortAsc.bind(this)}

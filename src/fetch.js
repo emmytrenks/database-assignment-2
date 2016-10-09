@@ -23,7 +23,7 @@ function postJSON(url, content = { }) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(content)
-  })
+  }).then(res => res.json())
 }
 
 function post(url, body, options = { }) {
