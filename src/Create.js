@@ -50,6 +50,7 @@ export default class Create extends Component {
           type="button"
           onClick={e => this.onCreate(e)}
           className="btn btn-primary">Create New Player</button>
+        <hr />
       </div>
     )
   }
