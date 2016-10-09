@@ -35,13 +35,11 @@ export default class extends Component {
     e.target.blur()
 
     getJSON(`${origin}/api/indians/delete/${jersey}`).then(res => {
-      console.log(res)
+      this.props.refresh()
       alert('Indian deleted successfully!')
     }).catch(e => {
       alert('Failed to delete indian.')
     })
-
-    this.props.refresh()
   }
 
   renderRow(indian) {
