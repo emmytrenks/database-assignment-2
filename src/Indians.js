@@ -21,19 +21,8 @@ function positionToString(str) {
 }
 
 export default class extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      indians: []
-    }
-  }
-
-  componentDidMount() {
-    fetch('/api/indians').then(res => res.json()).then(indians => {
-      this.setState({ indians })
-    }).catch(err => {
-      console.log('Error fetching indians:', err)
-    })
+  static propTypes = {
+    indians: React.PropTypes.array.isRequired
   }
 
   renderRow(indian) {
@@ -79,7 +68,7 @@ export default class extends Component {
             <th>Date of Birth</th>
           </tr>
         </thead>
-        <tbody>{this.state.indians.map(indian => this.renderRow(indian))}</tbody>
+        <tbody>{this.props.indians.map(indian => this.renderRow(indian))}</tbody>
       </table>
     )
   }

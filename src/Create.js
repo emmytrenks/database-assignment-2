@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import origin from 'origin-url'
+import { postJSON } from './fetch'
 
 const FIELDS = [
   { field: 'jersey', name: 'Jersey', type: 'number' },
@@ -13,6 +15,10 @@ const FIELDS = [
 ]
 
 export default class Create extends Component {
+  static propTypes = {
+    onCreate: React.PropTypes.func.isRequired
+  }
+
   constructor(props) {
     super(props)
 
@@ -28,7 +34,15 @@ export default class Create extends Component {
 
   onSubmit(e) {
     e.target.blur()
-    this.setState({ creating: false })
+    const obj = { }
+    for (const f of FIELDS) obj[f.field] = document.getElementById(f.field).value
+    postJSON(`${origin}/api/indians`, obj).then(res => {
+      this.setState({ creating: false })
+      alert('Successfully created!')
+      this.props.onCreate()
+    }).catch(e => {
+      alert(`Failed to create ... please check your form for validity.`)
+    })
   }
 
   onCancel(e) {
@@ -44,8 +58,8 @@ export default class Create extends Component {
           <form className="form-horizontal">
             {FIELDS.map(v => {
               return (
-                <div className="form-group">
-                  <label for={v.field} className="col-sm-2 control-label">{v.name}</label>
+                <div key={v.field} className="form-group">
+                  <label htmlFor={v.field} className="col-sm-2 control-label">{v.name}</label>
                   <div className="col-sm-10">
                     <input type={v.type} className="form-control" id={v.field} placeholder="" />
                   </div>
