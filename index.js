@@ -9,6 +9,30 @@ const sql = mysql.createPool({
   database: 'eat37'
 })
 
+const FIELDS = ['first_name', 'last_name', 'jersey', 'position', 'height', 'weight', 'batting_hand', 'throwing_hand', 'dob']
+
+app.post('/api/indians', (req, res) => {
+  let { body } = req
+  body = body || { }
+  for (const f of FIELDS) if (!body.hasOwnProperty(f)) {
+    res.status(400)
+    res.json({ error: `You did not provide a field: ${f}.` })
+    return
+  }
+
+  sql.query('insert into indians ' +
+    `(${FIELDS.join(', ')}) ` +
+    'values (?, ?, ?, ?, ?, ?, ?, ?, ?)', FIELDS.map(v => body[v]), (err, result) => {
+    if (err) {
+      res.status(500)
+      res.json({ error: 'Failed to perform query' })
+    } else {
+      res.status(200)
+      res.json({ status: 'OK' })
+    }
+  })
+})
+
 app.get('/api/indians', (req, res) => {
   sql.query('select * from indians', (err, rows) => {
     if (err) {
