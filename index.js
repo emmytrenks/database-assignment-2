@@ -80,6 +80,27 @@ app.get('/api/indians/desc/:attr', (req, res) => {
   })
 })
 
+app.post('/api/indians/search/:attr', bodyParser.json(), (req, res) => {
+  const body = req.body || { }
+  const search = body.search || ''
+  if (!search) {
+    res.status(400)
+    res.json({ error: 'You cannot search for something empty.' })
+    return
+  }
+
+  sql.query('select * from indians where ?? like ?', [req.params.attr, `%${search}%`], (err, rows) => {
+    if (err) {
+      res.status(500)//HTTP status code: server error
+      res.json({ error: 'Error fetching indians!' })
+    } else {
+      console.log(rows)
+      res.status(200)//HTTP status code: success
+      res.json(rows)
+    }
+  })
+})
+
 app.get('/api/indians/delete/:jersey', (req, res) => {
   sql.query('delete from indians where jersey = ?', [req.params.jersey], (err, result) => {
     if (err) {
