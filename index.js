@@ -10,7 +10,7 @@ const sql = mysql.createPool({
   database: 'eat37'
 })
 
-const FIELDS = ['first_name', 'last_name', 'jersey', 'position', 'height', 'weight', 'batting_hand', 'throwing_hand', 'dob']
+const FIELDS = ['jersey', 'first_name', 'last_name', 'position', 'height', 'weight', 'batting_hand', 'throwing_hand', 'dob']
 
 app.post('/api/indians', bodyParser.json(), (req, res) => {
   let { body } = req
@@ -24,6 +24,28 @@ app.post('/api/indians', bodyParser.json(), (req, res) => {
   sql.query('insert into indians ' +
     `(${FIELDS.join(', ')}) ` +
     'values (?, ?, ?, ?, ?, ?, ?, ?, ?)', FIELDS.map(v => body[v]), (err, result) => {
+    if (err) {
+      res.status(500)
+      res.json({ error: 'Failed to perform query' })
+    } else {
+      res.status(200)
+      res.json({ status: 'OK' })
+    }
+  })
+})
+
+app.post('/api/indians/update', bodyParser.json(), (req, res) => {
+  let { body } = req
+  body = body || { }
+  for (const f of FIELDS) if (!body.hasOwnProperty(f)) {
+    res.status(400)
+    res.json({ error: `You did not provide a field: ${f}.` })
+    return
+  }
+
+  sql.query('update indians set ' + FIELDS.slice(1).map(f => {
+    return `${f} = ?`
+  }).join(', ') + ' where jersey = ?', [...FIELDS.slice(1).map(v => body[v]), body.jersey], (err, result) => {
     if (err) {
       res.status(500)
       res.json({ error: 'Failed to perform query' })

@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import moment from 'moment'
 import origin from 'origin-url'
-import { getJSON } from './fetch'
+import { getJSON, postJSON } from './fetch'
+import PlayerForm from './PlayerForm'
+import PlayerFields from './PlayerFields'
 
 function formatDate(str) {
   return moment(str).format('ll')
@@ -28,6 +30,19 @@ export default class extends Component {
     sortAsc: React.PropTypes.func.isRequired,
     sortDesc: React.PropTypes.func.isRequired,
     refresh: React.PropTypes.func.isRequired
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      editing: null
+    }
+  }
+
+  onEdit(e, obj) {
+    e.preventDefault()
+    e.target.blur()
+    this.setState({ editing: obj })
   }
 
   onDelete(e, jersey) {
@@ -67,7 +82,7 @@ export default class extends Component {
         <td>{formatDate(dob)}</td>
         <td>
           <button
-            onClick={e => this.onEdit(e, jersey)}
+            onClick={e => this.onEdit(e, indian)}
             className="btn btn-xs btn-primary">Edit</button>
           &nbsp;
           <button
@@ -87,7 +102,41 @@ export default class extends Component {
     )
   }
 
+  onSubmit(e) {
+    e.target.blur()
+    const obj = { }
+    for (const f of PlayerFields) obj[f.field] = document.getElementById(f.field).value
+    postJSON(`${origin}/api/indians/update`, obj).then(res => {
+      this.setState({ editing: null })
+      alert('Successfully updated!')
+      this.props.refresh()
+    }).catch(e => {
+      alert(`Failed to update ... please check your form for validity.`)
+    })
+  }
+
+  onCancel(e) {
+    e.target.blur()
+    this.setState({ editing: null })
+  }
+
   render() {
+    const { editing } = this.state
+    if (editing) {
+      editing.dob = moment(editing.dob).format('YYYY-MM-DD')
+      const { jersey } = editing
+      return (
+        <div className="text-center">
+          <h3>Editing #{jersey}</h3>
+          <PlayerForm
+            submitText={'Update'}
+            defaults={editing}
+            locked={true}
+            onSubmit={this.onSubmit.bind(this)}
+            onCancel={this.onCancel.bind(this)} />
+        </div>
+      )
+    }
     return (
       <table className="table table-striped">
         <thead>

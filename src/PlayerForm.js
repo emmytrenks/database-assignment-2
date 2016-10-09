@@ -4,18 +4,20 @@ import FIELDS from './PlayerFields'
 export default class PlayerForm extends Component {
   static defaultProps = {
     defaults: { },
-    locked: false
+    locked: false,
+    submitText: 'Create'
   }
 
   static propTypes = {
     onSubmit: React.PropTypes.func.isRequired,
     onCancel: React.PropTypes.func.isRequired,
     locked: React.PropTypes.bool,
-    defaults: React.PropTypes.object
+    defaults: React.PropTypes.object,
+    submitText: React.PropTypes.string
   }
 
    render() {
-     const { locked, defaults, onSubmit, onCancel } = this.props
+     const { submitText, locked, defaults, onSubmit, onCancel } = this.props
      const c =  (
        <div className="text-center">
          <form className="form-horizontal">
@@ -34,7 +36,7 @@ export default class PlayerForm extends Component {
                <button
                  type="button"
                  onClick={e => onSubmit(e)}
-                 className="btn btn-success">Create</button>
+                 className="btn btn-success">{submitText}</button>
                &nbsp;
                <button
                  type="button"
