@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const bodyParser = require('body-parser')
 
 const mysql = require('mysql')
 const sql = mysql.createPool({
@@ -11,7 +12,7 @@ const sql = mysql.createPool({
 
 const FIELDS = ['first_name', 'last_name', 'jersey', 'position', 'height', 'weight', 'batting_hand', 'throwing_hand', 'dob']
 
-app.post('/api/indians', (req, res) => {
+app.post('/api/indians', bodyParser.json(), (req, res) => {
   let { body } = req
   body = body || { }
   for (const f of FIELDS) if (!body.hasOwnProperty(f)) {
