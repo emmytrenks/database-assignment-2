@@ -48,8 +48,7 @@ export default class extends Component {
   onDelete(e, jersey) {
     e.preventDefault()
     e.target.blur()
-
-    getJSON(`${origin}/api/indians/delete/${jersey}`).then(res => {
+    if (confirm(`Are you sure you really want to delete ${jersey}?`)) getJSON(`${origin}/api/indians/delete/${jersey}`).then(res => {
       this.props.refresh()
       alert('Indian deleted successfully!')
     }).catch(e => {
