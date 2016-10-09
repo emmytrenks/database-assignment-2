@@ -17,6 +17,9 @@ export default class extends Component {
   }
 
   grab(order = 'asc', attr = 'jersey') {
+    this.lastOrder = order
+    this.lastAttr = attr
+
     getJSON(`${origin}/api/indians/${order}/${attr}`).then(indians => {
       this.setState({ indians })
     }).catch(err => {
@@ -36,6 +39,10 @@ export default class extends Component {
     this.grab('desc', attr)
   }
 
+  refresh() {
+    this.grab(this.lastOrder, this.lastAttr)
+  }
+
   render() {
     const { indians } = this.state
     return (
@@ -50,7 +57,8 @@ export default class extends Component {
             <Indians
               indians={indians}
               sortAsc={this.sortAsc.bind(this)}
-              sortDesc={this.sortDesc.bind(this)} />
+              sortDesc={this.sortDesc.bind(this)}
+              refresh={this.refresh.bind(this)} />
           </div>
         </div>
       </div>

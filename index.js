@@ -58,6 +58,18 @@ app.get('/api/indians/desc/:attr', (req, res) => {
   })
 })
 
+app.get('/api/indians/delete/:jersey', (req, res) => {
+  sql.query('delete from indians where jersey = ?', [req.params.jersey], (err, result) => {
+    if (err) {
+      res.status(500)
+      res.json({ error: 'Failed to perform query' })
+    } else {
+      res.status(200)
+      res.json({ status: 'OK' })
+    }
+  })
+})
+
 const PORT = process.env.PORT || 4000
 app.listen(PORT, () => {
   console.log('Listening to port', PORT, '...')

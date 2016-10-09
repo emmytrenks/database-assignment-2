@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import moment from 'moment'
+import origin from 'origin-url'
+import { getJSON } from './fetch'
 
 function formatDate(str) {
   return moment(str).format('ll')
@@ -24,7 +26,22 @@ export default class extends Component {
   static propTypes = {
     indians: React.PropTypes.array.isRequired,
     sortAsc: React.PropTypes.func.isRequired,
-    sortDesc: React.PropTypes.func.isRequired
+    sortDesc: React.PropTypes.func.isRequired,
+    refresh: React.PropTypes.func.isRequired
+  }
+
+  onDelete(e, jersey) {
+    e.preventDefault()
+    e.target.blur()
+
+    getJSON(`${origin}/api/indians/delete/${jersey}`).then(res => {
+      console.log(res)
+      alert('Indian deleted successfully!')
+    }).catch(e => {
+      alert('Failed to delete indian.')
+    })
+
+    this.props.refresh()
   }
 
   renderRow(indian) {
@@ -50,6 +67,11 @@ export default class extends Component {
         <td>{handToString(batting_hand)}</td>
         <td>{handToString(throwing_hand)}</td>
         <td>{formatDate(dob)}</td>
+        <td>
+          <button
+            onClick={e => this.onDelete(e, jersey)}
+            className="btn btn-xs btn-danger">Delete</button>
+        </td>
       </tr>
     )
   }
@@ -77,6 +99,7 @@ export default class extends Component {
             <th>Batting Hand {this.renderArrows('batting_hand')}</th>
             <th>Throwing Hand {this.renderArrows('throwing_hand')}</th>
             <th>Date of Birth {this.renderArrows('dob')}</th>
+            <td></td>
           </tr>
         </thead>
         <tbody>{this.props.indians.map(indian => this.renderRow(indian))}</tbody>
