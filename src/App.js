@@ -5,6 +5,7 @@ import origin from 'origin-url'
 import { getJSON, postJSON } from './fetch'
 import Indians from './Indians'
 import Create from './Create'
+import PlayerFields from './PlayerFields'
 
 export default class extends Component {
   constructor(props) {
@@ -64,7 +65,7 @@ export default class extends Component {
   }
 
   render() {
-    const { indians } = this.state
+    const { searchAttr, indians } = this.state
     return (
       <div className="container">
         <div className="row">
@@ -82,6 +83,16 @@ export default class extends Component {
               </div>
               &nbsp;
               <button onClick={e => this.onSearch(e)} type="submit" className="btn btn-default">Search</button>
+            </form>
+            <form className="form-inline">
+              <div className="form-group">
+                {PlayerFields.map(f => {
+                  const { field, name } = f
+                  return (
+                    <label key={field} className="checkbox-inline"><input onChange={e => this.setState({ searchAttr: field })} checked={searchAttr === field} type="checkbox" value={field} /> {name}</label>
+                  )
+                })}
+              </div>
             </form>
             <Indians
               indians={indians}
