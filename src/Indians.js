@@ -22,7 +22,9 @@ function positionToString(str) {
 
 export default class extends Component {
   static propTypes = {
-    indians: React.PropTypes.array.isRequired
+    indians: React.PropTypes.array.isRequired,
+    sortAsc: React.PropTypes.func.isRequired,
+    sortDesc: React.PropTypes.func.isRequired
   }
 
   renderRow(indian) {
@@ -52,20 +54,29 @@ export default class extends Component {
     )
   }
 
+  renderArrows(attr) {
+    return (
+      <span>
+        <span onClick={e => this.props.sortAsc(e, attr)} className="glyphicon glyphicon-chevron-up" />
+        <span onClick={e => this.props.sortDesc(e, attr)} className="glyphicon glyphicon-chevron-down" />
+      </span>
+    )
+  }
+
   render() {
     return (
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>Jersey</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Position</th>
-            <th>Height</th>
-            <th>Weight</th>
-            <th>Batting Hand</th>
-            <th>Throwing Hand</th>
-            <th>Date of Birth</th>
+            <th>Jersey {this.renderArrows('jersey')}</th>
+            <th>First Name {this.renderArrows('first_name')}</th>
+            <th>Last Name {this.renderArrows('last_name')}</th>
+            <th>Position {this.renderArrows('position')}</th>
+            <th>Height {this.renderArrows('height')}</th>
+            <th>Weight {this.renderArrows('weight')}</th>
+            <th>Batting Hand {this.renderArrows('batting_hand')}</th>
+            <th>Throwing Hand {this.renderArrows('throwing_hand')}</th>
+            <th>Date of Birth {this.renderArrows('dob')}</th>
           </tr>
         </thead>
         <tbody>{this.props.indians.map(indian => this.renderRow(indian))}</tbody>

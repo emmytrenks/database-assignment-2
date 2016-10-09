@@ -34,8 +34,20 @@ app.post('/api/indians', bodyParser.json(), (req, res) => {
   })
 })
 
-app.get('/api/indians', (req, res) => {
-  sql.query('select * from indians', (err, rows) => {
+app.get('/api/indians/asc/:attr', (req, res) => {
+  sql.query('select * from indians order by ?? asc', [req.params.attr], (err, rows) => {
+    if (err) {
+      res.status(500)//HTTP status code: server error
+      res.json({ error: 'Error fetching indians!' })
+    } else {
+      res.status(200)//HTTP status code: success
+      res.json(rows)
+    }
+  })
+})
+
+app.get('/api/indians/desc/:attr', (req, res) => {
+  sql.query('select * from indians order by ?? desc', [req.params.attr], (err, rows) => {
     if (err) {
       res.status(500)//HTTP status code: server error
       res.json({ error: 'Error fetching indians!' })
