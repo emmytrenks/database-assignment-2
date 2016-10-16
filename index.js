@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const fallback = require('express-history-api-fallback')
 
 const mysql = require('mysql')
 const sql = mysql.createPool({
@@ -112,6 +113,10 @@ app.get('/api/indians/delete/:jersey', (req, res) => {
     }
   })
 })
+
+const root = __dirname + '/build'
+app.use(express.static(root))
+app.use(fallback('index.html', { root }))
 
 const PORT = process.env.PORT || 4000
 app.listen(PORT, () => {
