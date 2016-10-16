@@ -13,6 +13,7 @@ const sql = mysql.createPool({
 
 const FIELDS = ['jersey', 'first_name', 'last_name', 'position', 'height', 'weight', 'batting_hand', 'throwing_hand', 'dob']
 
+// This end-point creates a new indian.
 app.post('/api/indians', bodyParser.json(), (req, res) => {
   let { body } = req
   body = body || { }
@@ -35,6 +36,7 @@ app.post('/api/indians', bodyParser.json(), (req, res) => {
   })
 })
 
+// This end-point updates an indian.
 app.post('/api/indians/update', bodyParser.json(), (req, res) => {
   let { body } = req
   body = body || { }
@@ -57,6 +59,7 @@ app.post('/api/indians/update', bodyParser.json(), (req, res) => {
   })
 })
 
+// This end-point sorts indians by an attribute ascending.
 app.get('/api/indians/asc/:attr', (req, res) => {
   sql.query('select * from indians order by ?? asc', [req.params.attr], (err, rows) => {
     if (err) {
@@ -69,6 +72,7 @@ app.get('/api/indians/asc/:attr', (req, res) => {
   })
 })
 
+// This end-point sorts indians by an attribute descending.
 app.get('/api/indians/desc/:attr', (req, res) => {
   sql.query('select * from indians order by ?? desc', [req.params.attr], (err, rows) => {
     if (err) {
@@ -81,6 +85,7 @@ app.get('/api/indians/desc/:attr', (req, res) => {
   })
 })
 
+// This end-point searches indians by an attribute.
 app.post('/api/indians/search/:attr', bodyParser.json(), (req, res) => {
   const body = req.body || { }
   const search = body.search || ''
@@ -101,6 +106,7 @@ app.post('/api/indians/search/:attr', bodyParser.json(), (req, res) => {
   })
 })
 
+// This end-point deletes an indian by their primary key.
 app.get('/api/indians/delete/:jersey', (req, res) => {
   sql.query('delete from indians where jersey = ?', [req.params.jersey], (err, result) => {
     if (err) {
