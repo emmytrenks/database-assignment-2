@@ -95,7 +95,6 @@ app.post('/api/indians/search/:attr', bodyParser.json(), (req, res) => {
       res.status(500)//HTTP status code: server error
       res.json({ error: 'Error fetching indians!' })
     } else {
-      console.log(rows)
       res.status(200)//HTTP status code: success
       res.json(rows)
     }
