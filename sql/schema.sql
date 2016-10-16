@@ -23,7 +23,7 @@ insert into indians (first_name, last_name, jersey, position, height, weight, ba
   ('Mike', 'Clevinger', 52, 'P', 76, 210, 'R', 'R', '1990-12-21'),
   ('Joseph', 'Colon', 65, 'P', 72, 180, 'R', 'R', '1990-02-18'),
   ('Kyle', 'Crockett', 57, 'P', 74, 175, 'L', 'L', '1991-12-15'),
-  ('Perci', 'Garner', 66, 'P', 75, 225, 'R', 'R', '1998-12-13'),
+  ('Perci', 'Garner', 66, 'P', 75, 225, 'R', 'R', '1988-12-13'),
   ('Corey', 'Kluber', 28, 'P', 76, 215, 'R', 'R', '1986-04-10'),
   ('Jeff', 'Manship', 53, 'P', 74, 205, 'R', 'R', '1985-01-16'),
   ('Zach', 'McAllister', 34, 'P', 78, 240, 'R', 'R', '1986-12-08'),
@@ -51,4 +51,4 @@ insert into indians (first_name, last_name, jersey, position, height, weight, ba
   ('Rajai', 'Davis', 20, 'O', 70, 195, 'R', 'R', '1980-10-19'),
   ('Brandon', 'Guyer', 6, 'O', 74, 200, 'R', 'R', '1986-01-28'),
   ('Tyler', 'Naquin', 30, 'O', 74, 195, 'L', 'R', '1991-04-24'),
-  ('Carlos', 'Santana', 41, 'H', 71, 210, 'S', 'R', '1986-04-08');
+  ('Carlos', 'Santana', 41, 'I', 71, 210, 'S', 'R', '1986-04-08');
