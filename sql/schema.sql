@@ -12,7 +12,7 @@ create table players (
 );
 
 create table player_salaries (
-	﻿salaryYear int not null,
+	sal_year int not null,
 	team char(3) not null,
 	id varchar(12) references players (id) on delete cascade,
 	salary int not null,
@@ -838,7 +838,7 @@ insert into players (id, dob, first_name, last_name, weight, height, batting_han
 	('zobribe01', '1981-5-26', 'Ben', 'Zobrist', 210, 75, 'B', 'R'),
 	('zuninmi01', '1991-3-25', 'Mike', 'Zunino', 220, 74, 'R', 'R');
 
-insert into player_salaries (﻿salaryYear, team, id, salary)
+insert into player_salaries (sal_year, team, id, salary)
 	values (2015, 'ARI', 'ahmedni01', 508500),
 	(2015, 'ARI', 'anderch01', 512500),
 	(2015, 'ARI', 'chafian01', 507500),

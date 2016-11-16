@@ -5,14 +5,12 @@ import origin from 'origin-url'
 import { getJSON, postJSON } from './fetch'
 import Players from './Players'
 import Create from './Create'
-import PlayerFields from './PlayerFields'
 
 export default class extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      players: [],
-      searchAttr: 'first_name'
+      players: []
     }
   }
 
@@ -32,8 +30,7 @@ export default class extends Component {
   }
 
   search(search = '') {
-    const { searchAttr } = this.state
-    postJSON(`${origin}/api/players/search/${searchAttr}`, { search }).then(players => {
+    postJSON(`${origin}/api/players/search`, { search }).then(players => {
       this.setState({ players })
     }).catch(err => {
       console.log('Error fetching players:', err)
@@ -65,7 +62,7 @@ export default class extends Component {
   }
 
   render() {
-    const { searchAttr, players } = this.state
+    const { players } = this.state
     return (
       <div className="container">
         <div className="row">
@@ -83,16 +80,6 @@ export default class extends Component {
               </div>
               &nbsp;
               <button onClick={e => this.onSearch(e)} type="submit" className="btn btn-default">Search</button>
-            </form>
-            <form className="form-inline">
-              <div className="form-group">
-                {PlayerFields.map(f => {
-                  const { field, name } = f
-                  return (
-                    <label key={field} className="checkbox-inline"><input onChange={e => this.setState({ searchAttr: field })} checked={searchAttr === field} type="checkbox" value={field} /> {name}</label>
-                  )
-                })}
-              </div>
             </form>
             <Players
               players={players}
