@@ -18,7 +18,7 @@ const pool = new pg.Pool({
 })
 
 const PLAYER_FIELDS = ['id', 'dob', 'first_name', 'last_name', 'weight', 'height', 'batting_hand', 'throwing_hand']
-const SALARY_FIELDS = ['sal_year', 'team', 'id', 'salary']
+const SALARY_FIELDS = ['id', 'sal_year', 'team', 'salary']
 
 // This end-point sorts players by an attribute ascending.
 app.get('/api/players/asc/:attr', (req, res) => {
@@ -117,25 +117,39 @@ app.post('/api/players', bodyParser.json(), (req, res) => {
   })
 })
 
-// This end-point updates an indian.
-app.post('/api/indians/update', bodyParser.json(), (req, res) => {
+// This end-point updates a player.
+app.post('/api/players/update', bodyParser.json(), (req, res) => {
   let { body } = req
   body = body || { }
-  for (const f of FIELDS) if (!body.hasOwnProperty(f)) {
+  for (const f of PLAYER_FIELDS) if (!body.hasOwnProperty(f)) {
     res.status(400)
-    res.json({ error: `You did not provide a field: ${f}.` })
+    res.json({ error: `You did not provide a player field: ${f}.` })
+    return
+  }
+  for (const f of SALARY_FIELDS) if (!body.hasOwnProperty(f)) {
+    res.status(400)
+    res.json({ error: `You did not provide a salary field: ${f}.` })
     return
   }
 
-  sql.query('update indians set ' + FIELDS.slice(1).map(f => {
-    return `${f} = ?`
-  }).join(', ') + ' where jersey = ?', [...FIELDS.slice(1).map(v => body[v]), body.jersey], (err, result) => {
+  pool.query('update players set ' + PLAYER_FIELDS.slice(1).map((f, i) => {
+    return `${f} = $${i + 1}`
+  }).join(', ') + ` where id = $${PLAYER_FIELDS.length}`, [...PLAYER_FIELDS.slice(1).map(v => body[v]), body.id], (err, result) => {
     if (err) {
       res.status(500)
       res.json({ error: 'Failed to perform query' })
     } else {
-      res.status(200)
-      res.json({ status: 'OK' })
+      pool.query('update player_salaries set ' + SALARY_FIELDS.slice(1).map((f, i) => {
+        return `${f} = $${i + 1}`
+      }).join(', ') + ` where id = $${SALARY_FIELDS.length}`, [...SALARY_FIELDS.slice(1).map(v => body[v]), body.id], (err, result) => {
+        if (err) {
+          res.status(500)
+          res.json({ error: 'Failed to perform query' })
+        } else {
+          res.status(200)
+          res.json({ status: 'OK' })
+        }
+      })
     }
   })
 })
