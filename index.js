@@ -18,7 +18,7 @@ const pool = new pg.Pool({
 })
 
 const PLAYER_FIELDS = ['id', 'dob', 'first_name', 'last_name', 'weight', 'height', 'batting_hand', 'throwing_hand']
-const SALARY_FIELDS = ['salaryYear', 'team', 'id', 'salary']
+const SALARY_FIELDS = ['sal_year', 'team', 'id', 'salary']
 
 // This end-point sorts players by an attribute ascending.
 app.get('/api/players/asc/:attr', (req, res) => {
@@ -56,7 +56,7 @@ app.post('/api/players/search', bodyParser.json(), (req, res) => {
     return
   }
 
-  pool.query('select * from players where id ilike $1 or first_name ilike $1 or last_name ilike $1', [`%${search}%`], (err, result) => {
+  pool.query('select * from players natural join player_salaries where id ilike $1 or first_name ilike $1 or last_name ilike $1', [`%${search}%`], (err, result) => {
     if (err) {
       res.status(500)//HTTP status code: server error
       res.json({ error: 'Error fetching players!' })
@@ -80,25 +80,39 @@ app.get('/api/players/delete/:id', (req, res) => {
   })
 })
 
-// This end-point creates a new indian.
-app.post('/api/indians', bodyParser.json(), (req, res) => {
+// This end-point creates a new player.
+app.post('/api/players', bodyParser.json(), (req, res) => {
   let { body } = req
   body = body || { }
-  for (const f of FIELDS) if (!body.hasOwnProperty(f)) {
+  for (const f of PLAYER_FIELDS) if (!body.hasOwnProperty(f)) {
     res.status(400)
-    res.json({ error: `You did not provide a field: ${f}.` })
+    res.json({ error: `You did not provide a player field: ${f}.` })
+    return
+  }
+  for (const f of SALARY_FIELDS) if (!body.hasOwnProperty(f)) {
+    res.status(400)
+    res.json({ error: `You did not provide a salary field: ${f}.` })
     return
   }
 
-  sql.query('insert into indians ' +
-    `(${FIELDS.join(', ')}) ` +
-    'values (?, ?, ?, ?, ?, ?, ?, ?, ?)', FIELDS.map(v => body[v]), (err, result) => {
+  pool.query('insert into players ' +
+    `(${PLAYER_FIELDS.join(', ')}) ` +
+    `values (${Array(PLAYER_FIELDS.length).fill('?').map((v, i) => `$${i + 1}`).join(', ')})`, PLAYER_FIELDS.map(v => body[v]), (err, result) => {
     if (err) {
       res.status(500)
       res.json({ error: 'Failed to perform query' })
     } else {
-      res.status(200)
-      res.json({ status: 'OK' })
+      pool.query('insert into player_salaries ' +
+        `(${SALARY_FIELDS.join(', ')}) ` +
+        `values (${Array(SALARY_FIELDS.length).fill('?').map((v, i) => `$${i + 1}`).join(', ')})`, SALARY_FIELDS.map(v => body[v]), (err, result) => {
+        if (err) {
+          res.status(500)
+          res.json({ error: 'Failed to perform query' })
+        } else {
+          res.status(200)
+          res.json({ status: 'OK' })
+        }
+      })
     }
   })
 })

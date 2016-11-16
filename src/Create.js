@@ -27,7 +27,7 @@ export default class Create extends Component {
     e.target.blur()
     const obj = { }
     for (const f of FIELDS) obj[f.field] = document.getElementById(f.field).value
-    postJSON(`${origin}/api/indians`, obj).then(res => {
+    postJSON(`${origin}/api/players`, obj).then(res => {
       this.setState({ creating: false })
       alert('Successfully created!')
       this.props.onCreate()
