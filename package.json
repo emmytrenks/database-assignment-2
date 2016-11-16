@@ -17,6 +17,7 @@
     "react-dom": "^15.3.2"
   },
   "scripts": {
+    "postinstall": "npm run build",
     "start": "react-scripts start",
     "server": "node index.js",
     "build": "react-scripts build",
