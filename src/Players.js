@@ -16,14 +16,6 @@ function handToString(str) {
   return `${str} (unknown)`
 }
 
-function positionToString(str) {
-  if (str === 'O') return 'Outfield'
-  else if (str === 'I') return 'Infield'
-  else if (str === 'C') return 'Catcher'
-  else if (str === 'P') return 'Pitcher'
-  return `${str} (unknown)`
-}
-
 export default class extends Component {
   static propTypes = {
     players: React.PropTypes.array.isRequired,
@@ -45,10 +37,10 @@ export default class extends Component {
     this.setState({ editing: obj })
   }
 
-  onDelete(e, jersey) {
+  onDelete(e, id) {
     e.preventDefault()
     e.target.blur()
-    if (confirm(`Are you sure you really want to delete ${jersey}?`)) getJSON(`${origin}/api/players/delete/${jersey}`).then(res => {
+    if (confirm(`Are you sure you really want to delete ${id}?`)) getJSON(`${origin}/api/players/delete/${id}`).then(res => {
       this.props.refresh()
       alert('Indian deleted successfully!')
     }).catch(e => {
@@ -59,7 +51,14 @@ export default class extends Component {
   renderRow(player) {
     return (
       <tr key={player.id}>
-        {PlayerFields.map(field => <td>{player[field.field]}</td>)}
+        {PlayerFields.map(f => {
+          let data = player[f.field]
+          if (f.field.indexOf('hand') !== -1) data = handToString(data)
+          else if (f.type === 'date') data = formatDate(data)
+          return (
+            <td key={f.field}>{data}</td>
+          )
+        })}
         <td>
           <button
             onClick={e => this.onEdit(e, player)}
@@ -104,10 +103,10 @@ export default class extends Component {
     const { editing } = this.state
     if (editing) {
       editing.dob = moment(editing.dob).format('YYYY-MM-DD')
-      const { jersey } = editing
+      const { id } = editing
       return (
         <div className="text-center">
-          <h3>Editing #{jersey}</h3>
+          <h3>Editing id: {id}</h3>
           <PlayerForm
             submitText={'Update'}
             defaults={editing}
@@ -121,8 +120,8 @@ export default class extends Component {
       <table className="table table-striped">
         <thead>
           <tr>
-            {PlayerFields.map(field => <th>{field.name} {this.renderArrows(field.field)}</th>)}
-            <td></td>
+            {PlayerFields.map(field => <th key={field.field}>{field.name} {this.renderArrows(field.field)}</th>)}
+            <th key="extra"></th>
           </tr>
         </thead>
         <tbody>{this.props.players.map(indian => this.renderRow(indian))}</tbody>

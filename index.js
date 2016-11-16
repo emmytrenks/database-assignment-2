@@ -22,7 +22,7 @@ const SALARY_FIELDS = ['salaryYear', 'team', 'id', 'salary']
 
 // This end-point sorts indians by an attribute ascending.
 app.get('/api/players/asc/:attr', (req, res) => {
-  pool.query('select * from players order by $1 asc', [req.params.attr], (err, result) => {
+  pool.query(`select * from players order by ${req.params.attr} asc`, (err, result) => {
     if (err) {
       res.status(500)//HTTP status code: server error
       res.json({ error: 'Error fetching players!' })
@@ -35,7 +35,7 @@ app.get('/api/players/asc/:attr', (req, res) => {
 
 // This end-point sorts indians by an attribute descending.
 app.get('/api/players/desc/:attr', (req, res) => {
-  pool.query('select * from players order by $1 desc', [req.params.attr], (err, result) => {
+  pool.query(`select * from players order by ${req.params.attr} desc`, (err, result) => {
     if (err) {
       res.status(500)//HTTP status code: server error
       res.json({ error: 'Error fetching players!' })
