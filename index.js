@@ -46,7 +46,28 @@ app.get('/api/players/desc/:attr', (req, res) => {
   })
 })
 
-// This end-point deletes an indian by their primary key.
+// This end-point searches players by attributes
+app.post('/api/players/search', bodyParser.json(), (req, res) => {
+  const body = req.body || { }
+  const search = body.search || ''
+  if (!search) {
+    res.status(400)
+    res.json({ error: 'You cannot search for something empty.' })
+    return
+  }
+
+  pool.query('select * from players where id ilike $1 or first_name ilike $1 or last_name ilike $1', [`%${search}%`], (err, result) => {
+    if (err) {
+      res.status(500)//HTTP status code: server error
+      res.json({ error: 'Error fetching players!' })
+    } else {
+      res.status(200)//HTTP status code: success
+      res.json(result.rows)
+    }
+  })
+})
+
+// This end-point deletes a player by their id
 app.get('/api/players/delete/:id', (req, res) => {
   pool.query('delete from players where id = $1', [req.params.id], (err, result) => {
     if (err) {
@@ -101,27 +122,6 @@ app.post('/api/indians/update', bodyParser.json(), (req, res) => {
     } else {
       res.status(200)
       res.json({ status: 'OK' })
-    }
-  })
-})
-
-// This end-point searches indians by an attribute.
-app.post('/api/indians/search/:attr', bodyParser.json(), (req, res) => {
-  const body = req.body || { }
-  const search = body.search || ''
-  if (!search) {
-    res.status(400)
-    res.json({ error: 'You cannot search for something empty.' })
-    return
-  }
-
-  sql.query('select * from indians where ?? like ?', [req.params.attr, `%${search}%`], (err, rows) => {
-    if (err) {
-      res.status(500)//HTTP status code: server error
-      res.json({ error: 'Error fetching indians!' })
-    } else {
-      res.status(200)//HTTP status code: success
-      res.json(rows)
     }
   })
 })
