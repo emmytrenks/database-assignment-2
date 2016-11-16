@@ -7,7 +7,7 @@ export default [
   { field: 'height', name: 'Height', type: 'number' },
   { field: 'batting_hand', name: 'Bat Hand', type: 'text' },
   { field: 'throwing_hand', name: 'Throw Hand', type: 'text' },
-  { field: 'salaryYear', name: 'Year', type: 'number' },
+  { field: 'sal_year', name: 'Year', type: 'number' },
   { field: 'salary', name: 'Salary', type: 'number' },
   { field: 'dob', name: 'DOB', type: 'date' }
 ]

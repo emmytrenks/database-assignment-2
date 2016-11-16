@@ -4,6 +4,7 @@ import origin from 'origin-url'
 import { getJSON, postJSON } from './fetch'
 import PlayerForm from './PlayerForm'
 import PlayerFields from './PlayerFields'
+import numeral from 'numeral'
 
 function formatDate(str) {
   return moment(str).format('ll')
@@ -55,6 +56,7 @@ export default class extends Component {
           let data = player[f.field]
           if (f.field.indexOf('hand') !== -1) data = handToString(data)
           else if (f.type === 'date') data = formatDate(data)
+          else if (f.field === 'salary') data = numeral(data).format('$0,0[.][00000000]')
           return (
             <td key={f.field}>{data}</td>
           )
