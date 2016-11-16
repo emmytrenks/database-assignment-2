@@ -26,7 +26,7 @@ export default class PlayerForm extends Component {
               <div key={v.field} className="form-group">
                 <label htmlFor={v.field} className="col-sm-2 control-label">{v.name}</label>
                 <div className="col-sm-10">
-                  <input disabled={locked && v.field === 'jersey'} defaultValue={defaults.hasOwnProperty(v.field) ? defaults[v.field] : undefined} type={v.type} className="form-control" id={v.field} placeholder="" />
+                  <input disabled={locked && v.field === 'id'} defaultValue={defaults.hasOwnProperty(v.field) ? defaults[v.field] : undefined} type={v.type} className="form-control" id={v.field} placeholder="" />
                 </div>
               </div>
             )

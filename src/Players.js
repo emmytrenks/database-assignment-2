@@ -14,6 +14,7 @@ function handToString(str) {
   if (str === 'R') return 'Right'
   else if (str === 'L') return 'Left'
   else if (str === 'S') return 'Switch'
+  else if (str === 'B') return 'Both'
   return `${str} (unknown)`
 }
 
