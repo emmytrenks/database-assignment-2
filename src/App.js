@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './App.css'
 import origin from 'origin-url'
 import { getJSON, postJSON } from './fetch'
-import Indians from './Indians'
+import Players from './Players'
 import Create from './Create'
 import PlayerFields from './PlayerFields'
 
@@ -11,7 +11,7 @@ export default class extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      indians: [],
+      players: [],
       searchAttr: 'first_name'
     }
   }
@@ -24,19 +24,19 @@ export default class extends Component {
     this.lastOrder = order
     this.lastAttr = attr
 
-    getJSON(`${origin}/api/indians/${order}/${attr}`).then(indians => {
-      this.setState({ indians })
+    getJSON(`${origin}/api/players/${order}/${attr}`).then(players => {
+      this.setState({ players })
     }).catch(err => {
-      console.log('Error fetching indians:', err)
+      console.log('Error fetching players:', err)
     })
   }
 
   search(search = '') {
     const { searchAttr } = this.state
-    postJSON(`${origin}/api/indians/search/${searchAttr}`, { search }).then(indians => {
-      this.setState({ indians })
+    postJSON(`${origin}/api/players/search/${searchAttr}`, { search }).then(players => {
+      this.setState({ players })
     }).catch(err => {
-      console.log('Error fetching indians:', err)
+      console.log('Error fetching players:', err)
     })
   }
 
@@ -65,7 +65,7 @@ export default class extends Component {
   }
 
   render() {
-    const { searchAttr, indians } = this.state
+    const { searchAttr, players } = this.state
     return (
       <div className="container">
         <div className="row">
@@ -111,8 +111,8 @@ export default class extends Component {
                 })}
               </div>
             </form>
-            <Indians
-              indians={indians}
+            <Players
+              players={players}
               sortAsc={this.sortAsc.bind(this)}
               sortDesc={this.sortDesc.bind(this)}
               refresh={this.refresh.bind(this)} />

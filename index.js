@@ -3,15 +3,48 @@ const app = express()
 const bodyParser = require('body-parser')
 const fallback = require('express-history-api-fallback')
 
-const mysql = require('mysql')
-const sql = mysql.createPool({
-  connectionLimit: 3,
-  host: 'localhost',
-  user: 'root',
-  database: 'eat37'
+const url = require('url')
+const params = url.parse(process.env.DATABASE_URL)
+const auth = params.auth.split(':')
+
+const pg = require('pg')
+const pool = new pg.Pool({
+  user: auth[0],
+  password: auth[1],
+  host: params.hostname,
+  port: params.port,
+  database: params.pathname.split('/')[1],
+  ssl: true
 })
 
-const FIELDS = ['jersey', 'first_name', 'last_name', 'position', 'height', 'weight', 'batting_hand', 'throwing_hand', 'dob']
+const PLAYER_FIELDS = ['id', 'dob', 'first_name', 'last_name', 'weight', 'height', 'batting_hand', 'throwing_hand']
+const SALARY_FIELDS = ['salaryYear', 'team', 'id', 'salary']
+
+// This end-point sorts indians by an attribute ascending.
+app.get('/api/players/asc/:attr', (req, res) => {
+  pool.query('select * from players order by $1 asc', [req.params.attr], (err, result) => {
+    if (err) {
+      res.status(500)//HTTP status code: server error
+      res.json({ error: 'Error fetching players!' })
+    } else {
+      res.status(200)//HTTP status code: success
+      res.json(result.rows)
+    }
+  })
+})
+
+// This end-point sorts indians by an attribute descending.
+app.get('/api/players/desc/:attr', (req, res) => {
+  pool.query('select * from players order by $1 desc', [req.params.attr], (err, result) => {
+    if (err) {
+      res.status(500)//HTTP status code: server error
+      res.json({ error: 'Error fetching players!' })
+    } else {
+      res.status(200)//HTTP status code: success
+      res.json(result.rows)
+    }
+  })
+})
 
 // This end-point creates a new indian.
 app.post('/api/indians', bodyParser.json(), (req, res) => {
@@ -55,32 +88,6 @@ app.post('/api/indians/update', bodyParser.json(), (req, res) => {
     } else {
       res.status(200)
       res.json({ status: 'OK' })
-    }
-  })
-})
-
-// This end-point sorts indians by an attribute ascending.
-app.get('/api/indians/asc/:attr', (req, res) => {
-  sql.query('select * from indians order by ?? asc', [req.params.attr], (err, rows) => {
-    if (err) {
-      res.status(500)//HTTP status code: server error
-      res.json({ error: 'Error fetching indians!' })
-    } else {
-      res.status(200)//HTTP status code: success
-      res.json(rows)
-    }
-  })
-})
-
-// This end-point sorts indians by an attribute descending.
-app.get('/api/indians/desc/:attr', (req, res) => {
-  sql.query('select * from indians order by ?? desc', [req.params.attr], (err, rows) => {
-    if (err) {
-      res.status(500)//HTTP status code: server error
-      res.json({ error: 'Error fetching indians!' })
-    } else {
-      res.status(200)//HTTP status code: success
-      res.json(rows)
     }
   })
 })

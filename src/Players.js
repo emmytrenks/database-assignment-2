@@ -26,7 +26,7 @@ function positionToString(str) {
 
 export default class extends Component {
   static propTypes = {
-    indians: React.PropTypes.array.isRequired,
+    players: React.PropTypes.array.isRequired,
     sortAsc: React.PropTypes.func.isRequired,
     sortDesc: React.PropTypes.func.isRequired,
     refresh: React.PropTypes.func.isRequired
@@ -48,7 +48,7 @@ export default class extends Component {
   onDelete(e, jersey) {
     e.preventDefault()
     e.target.blur()
-    if (confirm(`Are you sure you really want to delete ${jersey}?`)) getJSON(`${origin}/api/indians/delete/${jersey}`).then(res => {
+    if (confirm(`Are you sure you really want to delete ${jersey}?`)) getJSON(`${origin}/api/players/delete/${jersey}`).then(res => {
       this.props.refresh()
       alert('Indian deleted successfully!')
     }).catch(e => {
@@ -56,36 +56,17 @@ export default class extends Component {
     })
   }
 
-  renderRow(indian) {
-    const {
-      jersey,
-      first_name,
-      last_name,
-      position,
-      height,
-      weight,
-      batting_hand,
-      throwing_hand,
-      dob
-    } = indian
+  renderRow(player) {
     return (
-      <tr key={jersey}>
-        <th scope="row">{`#${jersey}`}</th>
-        <td>{first_name}</td>
-        <td>{last_name}</td>
-        <td>{positionToString(position)}</td>
-        <td>{`${height} inches`}</td>
-        <td>{`${weight} lbs`}</td>
-        <td>{handToString(batting_hand)}</td>
-        <td>{handToString(throwing_hand)}</td>
-        <td>{formatDate(dob)}</td>
+      <tr key={player.id}>
+        {PlayerFields.map(field => <td>{player[field.field]}</td>)}
         <td>
           <button
-            onClick={e => this.onEdit(e, indian)}
+            onClick={e => this.onEdit(e, player)}
             className="btn btn-xs btn-primary">Edit</button>
           &nbsp;
           <button
-            onClick={e => this.onDelete(e, jersey)}
+            onClick={e => this.onDelete(e, player)}
             className="btn btn-xs btn-danger">Delete</button>
         </td>
       </tr>
@@ -105,7 +86,7 @@ export default class extends Component {
     e.target.blur()
     const obj = { }
     for (const f of PlayerFields) obj[f.field] = document.getElementById(f.field).value
-    postJSON(`${origin}/api/indians/update`, obj).then(res => {
+    postJSON(`${origin}/api/players/update`, obj).then(res => {
       this.setState({ editing: null })
       alert('Successfully updated!')
       this.props.refresh()
@@ -140,19 +121,11 @@ export default class extends Component {
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>Jersey {this.renderArrows('jersey')}</th>
-            <th>First Name {this.renderArrows('first_name')}</th>
-            <th>Last Name {this.renderArrows('last_name')}</th>
-            <th>Position {this.renderArrows('position')}</th>
-            <th>Height {this.renderArrows('height')}</th>
-            <th>Weight {this.renderArrows('weight')}</th>
-            <th>Batting Hand {this.renderArrows('batting_hand')}</th>
-            <th>Throwing Hand {this.renderArrows('throwing_hand')}</th>
-            <th>Birthday {this.renderArrows('dob')}</th>
+            {PlayerFields.map(field => <th>{field.name} {this.renderArrows(field.field)}</th>)}
             <td></td>
           </tr>
         </thead>
-        <tbody>{this.props.indians.map(indian => this.renderRow(indian))}</tbody>
+        <tbody>{this.props.players.map(indian => this.renderRow(indian))}</tbody>
       </table>
     )
   }
