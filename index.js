@@ -20,7 +20,7 @@ const pool = new pg.Pool({
 const PLAYER_FIELDS = ['id', 'dob', 'first_name', 'last_name', 'weight', 'height', 'batting_hand', 'throwing_hand']
 const SALARY_FIELDS = ['salaryYear', 'team', 'id', 'salary']
 
-// This end-point sorts indians by an attribute ascending.
+// This end-point sorts players by an attribute ascending.
 app.get('/api/players/asc/:attr', (req, res) => {
   pool.query(`select * from players natural join player_salaries order by ${req.params.attr} asc`, (err, result) => {
     if (err) {
@@ -33,7 +33,7 @@ app.get('/api/players/asc/:attr', (req, res) => {
   })
 })
 
-// This end-point sorts indians by an attribute descending.
+// This end-point sorts players by an attribute descending.
 app.get('/api/players/desc/:attr', (req, res) => {
   pool.query(`select * from players natural join player_salaries order by ${req.params.attr} desc`, (err, result) => {
     if (err) {
@@ -42,6 +42,19 @@ app.get('/api/players/desc/:attr', (req, res) => {
     } else {
       res.status(200)//HTTP status code: success
       res.json(result.rows)
+    }
+  })
+})
+
+// This end-point deletes an indian by their primary key.
+app.get('/api/players/delete/:id', (req, res) => {
+  pool.query('delete from players where id = $1', [req.params.id], (err, result) => {
+    if (err) {
+      res.status(500)
+      res.json({ error: 'Failed to perform query' })
+    } else {
+      res.status(200)
+      res.json({ status: 'OK' })
     }
   })
 })

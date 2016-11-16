@@ -44,9 +44,9 @@ export default class extends Component {
     e.target.blur()
     if (confirm(`Are you sure you really want to delete ${id}?`)) getJSON(`${origin}/api/players/delete/${id}`).then(res => {
       this.props.refresh()
-      alert('Indian deleted successfully!')
+      alert('Player deleted successfully!')
     }).catch(e => {
-      alert('Failed to delete indian.')
+      alert('Failed to delete player.')
     })
   }
 
@@ -68,7 +68,7 @@ export default class extends Component {
             className="btn btn-xs btn-primary">Edit</button>
           &nbsp;
           <button
-            onClick={e => this.onDelete(e, player)}
+            onClick={e => this.onDelete(e, player.id)}
             className="btn btn-xs btn-danger">Delete</button>
         </td>
       </tr>
@@ -127,7 +127,7 @@ export default class extends Component {
             <th key="extra"></th>
           </tr>
         </thead>
-        <tbody>{this.props.players.map(indian => this.renderRow(indian))}</tbody>
+        <tbody>{this.props.players.map(player => this.renderRow(player))}</tbody>
       </table>
     )
   }
