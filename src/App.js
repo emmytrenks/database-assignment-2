@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import Navigation from 'react-navbar-bootstrap'
 
 const layout = [
-  { link: '/', text: 'Home' }
+  { link: '/', text: 'Home' },
+  { link: '/salarychange', text: 'Salary Changes' },
+  { link: '/teammoney', text: 'Highest Paid Teams' }
 ]
 
 class App extends Component {
