@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import moment from 'moment'
 import origin from 'origin-url'
-import { getJSON, postJSON } from './fetch'
+import { getJSON, postJSON } from '../fetch'
 import PlayerForm from './PlayerForm'
 import PlayerFields from './PlayerFields'
 import numeral from 'numeral'

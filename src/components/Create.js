@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import origin from 'origin-url'
-import { postJSON } from './fetch'
+import { postJSON } from '../fetch'
 import PlayerForm from './PlayerForm'
 
 import FIELDS from './PlayerFields'
