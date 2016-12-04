@@ -56,7 +56,7 @@ app.post('/api/players/search', bodyParser.json(), (req, res) => {
     return
   }
 
-  pool.query('select * from players natural join player_salaries where id ilike $1 or first_name ilike $1 or last_name ilike $1', [`%${search}%`], (err, result) => {
+  pool.query('select * from players natural join player_salaries where id like $1 or first_name like $1 or last_name like $1 or team like $1', [`%${search}%`], (err, result) => {
     if (err) {
       res.status(500)//HTTP status code: server error
       res.json({ error: 'Error fetching players!' })
