@@ -22,7 +22,7 @@ const SALARY_FIELDS = ['id', 'sal_year', 'team', 'salary']
 
 // This end-point sorts players by an attribute ascending.
 app.get('/api/players/asc/:attr', (req, res) => {
-  pool.query(`select * from players natural join player_salaries order by ${req.params.attr} asc`, (err, result) => {
+  pool.query(`select * from players natural join (select * from player_salaries where sal_year = \'2015\') as c order by ${req.params.attr} asc`, (err, result) => {
     if (err) {
       res.status(500)//HTTP status code: server error
       res.json({ error: 'Error fetching players!' })
@@ -35,7 +35,7 @@ app.get('/api/players/asc/:attr', (req, res) => {
 
 // This end-point sorts players by an attribute descending.
 app.get('/api/players/desc/:attr', (req, res) => {
-  pool.query(`select * from players natural join player_salaries order by ${req.params.attr} desc`, (err, result) => {
+  pool.query(`select * from players natural join (select * from player_salaries where sal_year = \'2015\') as c order by ${req.params.attr} desc`, (err, result) => {
     if (err) {
       res.status(500)//HTTP status code: server error
       res.json({ error: 'Error fetching players!' })
@@ -56,7 +56,7 @@ app.post('/api/players/search', bodyParser.json(), (req, res) => {
     return
   }
 
-  pool.query('select * from players natural join player_salaries where id like $1 or first_name like $1 or last_name like $1 or team like $1', [`%${search}%`], (err, result) => {
+  pool.query('select * from players natural join (select * from player_salaries where sal_year = \'2015\') as c where id like $1 or first_name like $1 or last_name like $1 or team like $1', [`%${search}%`], (err, result) => {
     if (err) {
       res.status(500)//HTTP status code: server error
       res.json({ error: 'Error fetching players!' })
@@ -150,6 +150,41 @@ app.post('/api/players/update', bodyParser.json(), (req, res) => {
           res.json({ status: 'OK' })
         }
       })
+    }
+  })
+})
+
+app.get('/api/teams', (req, res) => {
+  pool.query(`select sum(salary) as total, team from player_salaries where sal_year = \'2015\' group by team order by total desc`, (err, result) => {
+    if (err) {
+      res.status(500)//HTTP status code: server error
+      res.json({ error: 'Error fetching teams!' })
+    } else {
+      res.status(200)//HTTP status code: success
+      res.json(result.rows)
+    }
+  })
+})
+
+app.get('/api/salaries', (req, res) => {
+  pool.query(
+    `select id, first_name, last_name, change from players natural join (
+      select id, (
+        (
+          select salary from player_salaries inner1 where inner1.id = uid.id and
+            inner1.sal_year = (select max(sal_year) from player_salaries where id = uid.id)
+        ) - (
+          select salary from player_salaries inner2 where inner2.id = uid.id and
+            inner2.sal_year = (select min(sal_year) from player_salaries where id = uid.id)
+        )
+      ) as change from player_salaries uid group by id
+    ) as foobar order by change desc;`, (err, result) => {
+    if (err) {
+      res.status(500)//HTTP status code: server error
+      res.json({ error: 'Error fetching teams!' })
+    } else {
+      res.status(200)//HTTP status code: success
+      res.json(result.rows)
     }
   })
 })
